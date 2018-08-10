@@ -1,24 +1,18 @@
 import {filterByCodeowners} from './codeowners';
 import {getAllFilepaths, showAllFiles, showSelectedFiles} from './uiHelpers';
 
-let curButtonManager = null;
-
-function injectButton(owners, codeownersContent) {
-    if (curButtonManager) {
-        curButtonManager.unmount();
-    }
-    curButtonManager = new ButtonManager(owners, codeownersContent);
-    curButtonManager.mount();
-};
-
-export default injectButton;
+let globalBtnId = 1;
 
 class ButtonManager {
     constructor(owners, codeownersContent) {
         this._owners = owners;
         this._codeownersContent = codeownersContent;
 
-        this._button = null;
+        // I think github does some weird things when switching between pages,
+        // so need to use ids to find the button instead of direct button reference.
+        this._buttonId = `codeowner-ext-btn-${globalBtnId}`;
+        globalBtnId++;
+
         this._observer = null;
         this._isShowingMyFiles = false;
         this._cachedMyFiles = filterByCodeowners({
@@ -29,9 +23,13 @@ class ButtonManager {
     }
 
     mount() {
-        this._button = createBaseButton(getButtonText(this._isShowingMyFiles), 'Filter files based on CODEOWNERS');
+        const button = document.createElement('button');
+        button.className = 'diffbar-item btn btn-sm btn-secondary tooltipped tooltipped-s codeowners-btn';
+        button.id = this._buttonId;
+        button.innerHTML = getButtonText(this._isShowingMyFiles);
+        button.setAttribute('aria-label', 'Filter files based on CODEOWNERS');
         // Need to add button to DOM before setting events on it.
-        injectButtonToDom(this._button);
+        injectButtonToDom(button);
 
         if (!!this._codeownersContent) {
             const observedElem = document.querySelector('#files');
@@ -39,13 +37,13 @@ class ButtonManager {
                 this._observer = new MutationObserver(this.handleMutation.bind(this));
                 this._observer.observe(observedElem, {childList: true, subtree: true});
             }
-            this._button.onclick = () => {
+            button.onclick = () => {
                 this._isShowingMyFiles = !this._isShowingMyFiles;
                 this.applyFilter();
                 this._button.innerHTML = getButtonText(this._isShowingMyFiles);
             }
         } else {
-            this._button.onclick = () => {
+            button.onclick = () => {
                 const url = chrome.extension.getURL('popup/popup.html');
                 const w = window.open(url, '_blank', 'width=500,height=400,0,status=0');
             };
@@ -53,9 +51,9 @@ class ButtonManager {
     }
 
     unmount() {
-        if (this._button) {
-            this._button.remove();
-            this._button = null;
+        const button = document.querySelector(`#${this._buttonId}`);
+        if (button) {
+            button.remove();
         }
         if (this._observer) {
             this._observer.disconnect();
@@ -78,21 +76,18 @@ class ButtonManager {
     }
 }
 
+export default ButtonManager;
+
 function getButtonText(isShowingMyFiles) {
     return isShowingMyFiles ? 'Show all files' : 'Show my files';
-};
-
-function createBaseButton(text, tooltipText) {
-    const button = document.createElement('button');
-    button.className = 'diffbar-item btn btn-sm btn-secondary tooltipped tooltipped-s codeowners-btn';
-    button.innerHTML = text;
-    button.setAttribute('aria-label', tooltipText);
-    return button;
 };
 
 function injectButtonToDom(btn) {
     const container = document.querySelector(
         '#files_bucket > div.pr-toolbar.js-sticky.js-sticky-offset-scroll > div > div.float-right.pr-review-tools',
     );
+    if (!container) {
+        throw new Error("Could not find container to insert button");
+    }
     container.insertBefore(btn, container.firstChild);
 };

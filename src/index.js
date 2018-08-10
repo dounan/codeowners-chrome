@@ -1,17 +1,20 @@
+import ButtonManager from './ButtonManager';
 import {loadCodeownersContent} from './codeowners';
 import getTeamNames from './getTeamNames';
-import injectButton from './injectButton';
 import {getCurrentUsername} from './uiHelpers';
 
-execute();
+injectButton();
 
 chrome.runtime.onMessage.addListener(function(request, sender) {
-    if (request.type === 'injectButton') {
-        execute()
-    };
+    switch (request.type) {
+        case 'injectButton':
+            return injectButton();
+    }
 });
 
-async function execute() {
+let curButtonManager = null;
+
+async function injectButton() {
     if (!isPrFilesPage()) {
         return;
     }
@@ -19,10 +22,20 @@ async function execute() {
     if (username) {
         const {owner, repo} = getPullRequestDetails();
         const teamNames = await getTeamNames(owner, username);
+        const owners = toOwners(owner, username, teamNames);
         const codeownersContent = await loadCodeownersContent(owner, repo);
-        injectButton(toOwners(owner, username, teamNames), codeownersContent);
+        ejectButton();
+        curButtonManager = new ButtonManager(owners, codeownersContent);
+        curButtonManager.mount();
     }
 };
+
+function ejectButton() {
+    if (curButtonManager) {
+        curButtonManager.unmount();
+        curButtonManager = null;
+    }
+}
 
 function isPrFilesPage() {
     return window.location.href.replace(/\?.*/i, '').endsWith('/files');
