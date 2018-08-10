@@ -1,31 +1,29 @@
-import {filterMyFilenames} from './codeowners';
-import {getAllFilenames, showAllFiles, showSelectedFiles} from './uiHelpers';
+import {filterByCodeowners} from './codeowners';
+import {getAllFilepaths, showAllFiles, showSelectedFiles} from './uiHelpers';
 
 let curButtonManager = null;
 
-function injectButton(username, teamNames, codeownersContent) {
+function injectButton(owners, codeownersContent) {
     if (curButtonManager) {
         curButtonManager.unmount();
     }
-    curButtonManager = new ButtonManager(username, teamNames, codeownersContent);
+    curButtonManager = new ButtonManager(owners, codeownersContent);
     curButtonManager.mount();
 };
 
 export default injectButton;
 
 class ButtonManager {
-    constructor(username, teamNames, codeownersContent) {
-        this._username = username;
-        this._teamNames = teamNames;
+    constructor(owners, codeownersContent) {
+        this._owners = owners;
         this._codeownersContent = codeownersContent;
 
         this._button = null;
         this._isShowingMyFiles = false;
-        this._cachedMyFiles = filterMyFilenames({
-            allFilenames: getAllFilenames(),
+        this._cachedMyFiles = filterByCodeowners({
+            allFilepaths: getAllFilepaths(),
             codeownersContent,
-            teamNames,
-            username,
+            owners,
         });
     }
 

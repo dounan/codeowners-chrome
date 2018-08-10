@@ -8,7 +8,7 @@ export function getCurrentUsername() {
     return elements[0].content;
 }
 
-export function getAllFilenames() {
+export function getAllFilepaths() {
     return [...document.querySelectorAll('.file-info a')].map(e => e.innerHTML);
 }
 
