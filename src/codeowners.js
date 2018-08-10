@@ -22,6 +22,9 @@ export function filterByCodeowners({
 
 // Return an array of [gitignorePattern, ...owners]
 function parseCodeowners(codeownersContent) {
+    if (!codeownersContent) {
+        return [];
+    }
     return codeownersContent.split("\n")
       .map(line => line.trim)
       .filter(line => line.length > 0 && line[0] !== "#")
