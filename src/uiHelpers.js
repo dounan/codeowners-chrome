@@ -9,8 +9,7 @@ export function getCurrentUsername() {
 }
 
 export function getAllFilenames() {
-    // TODO
-    return [];
+    return [...document.querySelectorAll('.file-info a')].map(e => e.innerHTML);
 }
 
 export function showAllFiles() {
