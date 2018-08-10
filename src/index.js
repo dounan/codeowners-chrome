@@ -6,7 +6,9 @@ import {getCurrentUsername} from './uiHelpers';
 execute();
 
 chrome.runtime.onMessage.addListener(function(request, sender) {
-    if (request.type === 'injectButton') execute();
+    if (request.type === 'injectButton') {
+        execute()
+    };
 });
 
 async function execute() {
