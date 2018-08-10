@@ -19,11 +19,10 @@ export function showAllFiles() {
 }
 
 export function showSelectedFiles(selectedFilenames) {
-    document.querySelectorAll('#files > div > div').forEach(elem => {
+    document.querySelectorAll('#files .js-details-container').forEach(elem => {
         const nameElem = elem.querySelector('.file-info > a');
         if (nameElem) {
-            const filename = nameElem.title;
-            elem.style.display = selectedFilenames.includes(filename) ? 'block' : 'none';
+            elem.style.display = selectedFilenames.includes(nameElem.title) ? 'block' : 'none';
         }
     });
 };

@@ -38,7 +38,6 @@ function getPullRequestDetails() {
 };
 
 function toOwners(owner, username, teamNames) {
-    console.log(teamNames)
     const teamOwners = teamNames.map(name => `@${owner}/${name}`);
     return [`@${username}`, ...teamOwners];
 }
