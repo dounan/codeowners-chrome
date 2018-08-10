@@ -19,6 +19,7 @@ class ButtonManager {
         this._codeownersContent = codeownersContent;
 
         this._button = null;
+        this._observer = null;
         this._isShowingMyFiles = false;
         this._cachedMyFiles = filterByCodeowners({
             allFilepaths: getAllFilepaths(),
@@ -33,10 +34,14 @@ class ButtonManager {
         injectButtonToDom(this._button);
 
         if (!!this._codeownersContent) {
-            // TODO: add mutation observer for newly loaded files
+            const observedElem = document.querySelector('#files');
+            if (observedElem) {
+                this._observer = new MutationObserver(this.handleMutation.bind(this));
+                this._observer.observe(observedElem, {childList: true, subtree: true});
+            }
             this._button.onclick = () => {
                 this._isShowingMyFiles = !this._isShowingMyFiles;
-                this._isShowingMyFiles ? showSelectedFiles(this._cachedMyFiles) : showAllFiles();
+                this.applyFilter();
                 this._button.innerHTML = getButtonText(this._isShowingMyFiles);
             }
         } else {
@@ -52,7 +57,24 @@ class ButtonManager {
             this._button.remove();
             this._button = null;
         }
-        // TODO: cleanup mutation observer
+        if (this._observer) {
+            this._observer.disconnect();
+        }
+    }
+
+    applyFilter() {
+        this._isShowingMyFiles ? showSelectedFiles(this._cachedMyFiles) : showAllFiles();
+    }
+
+    handleMutation(mutationsList) {
+        this._cachedMyFiles = filterByCodeowners({
+            allFilepaths: getAllFilepaths(),
+            codeownersContent: this._codeownersContent,
+            owners: this._owners,
+        });
+        if (this._isShowingMyFiles) {
+            this.applyFilter();
+        }
     }
 }
 

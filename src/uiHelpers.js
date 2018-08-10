@@ -9,7 +9,7 @@ export function getCurrentUsername() {
 }
 
 export function getAllFilepaths() {
-    return [...document.querySelectorAll('.file-info a')].map(e => e.innerHTML);
+    return [...document.querySelectorAll('#files .file-info > a')].map(e => e.innerHTML);
 }
 
 export function showAllFiles() {
@@ -20,7 +20,10 @@ export function showAllFiles() {
 
 export function showSelectedFiles(selectedFilenames) {
     document.querySelectorAll('#files > div > div').forEach(elem => {
-        const filename = elem.querySelector('div.file-header.js-file-header > div.file-info > a').title;
-        elem.style.display = selectedFilenames.includes(filename) ? 'block' : 'none';
+        const nameElem = elem.querySelector('.file-info > a');
+        if (nameElem) {
+            const filename = nameElem.title;
+            elem.style.display = selectedFilenames.includes(filename) ? 'block' : 'none';
+        }
     });
 };
