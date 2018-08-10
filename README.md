@@ -9,5 +9,7 @@ Features:
 
 ![image](docs/all_chrome.png)
 
+![image](docs/popup.png)
+
 ## Credits
 Elay Gliksberg && Ore Poran
