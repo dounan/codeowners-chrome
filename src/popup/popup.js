@@ -1,18 +1,21 @@
-const githubTokenInput = document.getElementById('github_token');
+const codeownersInput = document.getElementById('codeowners_content');
 
 const handleSuccess = () => window.close();
 
-const saveToken = () => {
-  var oauth_token = githubTokenInput.value;
-  chrome.storage.sync.set({ oauth_token }, handleSuccess);
+const saveCodeownersContent = () => {
+  const default_codeowners = codeownersInput.value;
+  chrome.storage.sync.set({ default_codeowners }, handleSuccess);
+  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    tabs[0] && chrome.tabs.sendMessage(tabs[0].id, {type: 'injectButton'});
+  });
 }
 
-document.getElementById('save_token').addEventListener('click', saveToken);
+document.getElementById('save_codeowners_content').addEventListener('click', saveCodeownersContent);
 
-chrome.storage.sync.get('oauth_token', ({ oauth_token }) => {
-  if (!oauth_token) {
+chrome.storage.sync.get('default_codeowners', ({default_codeowners}) => {
+  if (!default_codeowners) {
     return;
   }
 
-  githubTokenInput.value = oauth_token;
+  codeownersInput.value = default_codeowners;
 });

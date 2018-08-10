@@ -1,14 +1,27 @@
-const toggleElementDisplay = element => {
-    if (element.style.display === 'none') {
-        element.style.display = 'block';
-    } else {
-        element.style.display = 'none';
+export function getCurrentUsername() {
+    const elements = document.querySelectorAll('meta[name="user-login"]');
+    if (elements.length === 0) {
+        return null;
+    } else if (elements.length > 1) {
+        throw new Error(`Expected at most 1 element but found ${elements.length} elements`);
     }
-};
+    return elements[0].content;
+}
 
-const getFileName = ele => ele.querySelector('div.file-header.js-file-header > div.file-info > a').title;
+export function getAllFilenames() {
+    // TODO
+    return [];
+}
 
-export const toggleFilteredFiles = (relevantFiles) => {
-    const files = document.querySelectorAll('#files > div > div');
-    files.forEach(x => !relevantFiles.includes(getFileName(x)) && toggleElementDisplay(x));
+export function showAllFiles() {
+    document.querySelectorAll('#files > div > div').forEach(elem => {
+        elem.style.display = 'block';
+    });
+}
+
+export function showSelectedFiles(selectedFilenames) {
+    document.querySelectorAll('#files > div > div').forEach(elem => {
+        const filename = elem.querySelector('div.file-header.js-file-header > div.file-info > a').title;
+        elem.style.display = selectedFilenames.includes(filename) ? 'block' : 'none';
+    });
 };

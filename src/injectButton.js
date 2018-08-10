@@ -1,86 +1,78 @@
-import {Codeowner} from 'codeowners-api';
-import {getToken} from './githubAuth';
-import {toggleFilteredFiles, askGithubToken} from './uiHelpers';
-import getRelevantFiles from './getRelevantFiles';
-import doesRepoHasCodeowners from './doesRepoHasCodeowners';
+import {filterMyFilenames} from './codeowners';
+import {getAllFilenames, showAllFiles, showSelectedFiles} from './uiHelpers';
 
-const ButtonId = 'codeowners-btn';
+let curButtonManager = null;
 
-let showMyFiles = true;
-const getButtonText = numOfFiles => {
-    return showMyFiles ? `Show my files ${numOfFiles >= 0 ? `(${numOfFiles})` : '(?)'}` : 'Show all files';
+function injectButton(username, teamNames, codeownersContent) {
+    if (curButtonManager) {
+        curButtonManager.unmount();
+    }
+    curButtonManager = new ButtonManager(username, teamNames, codeownersContent);
+    curButtonManager.mount();
 };
 
-const buttonExists = () => !!document.getElementById(ButtonId);
+export default injectButton;
 
-const injectButtonToDom = btn => {
-    const currentButton = document.querySelector(`#${ButtonId}`);
-    currentButton && currentButton.remove();
+class ButtonManager {
+    constructor(username, teamNames, codeownersContent) {
+        this._username = username;
+        this._teamNames = teamNames;
+        this._codeownersContent = codeownersContent;
 
+        this._button = null;
+        this._isShowingMyFiles = false;
+        this._cachedMyFiles = filterMyFilenames({
+            allFilenames: getAllFilenames(),
+            codeownersContent,
+            teamNames,
+            username,
+        });
+    }
+
+    mount() {
+        this._button = createBaseButton(getButtonText(this._isShowingMyFiles), 'Filter files based on CODEOWNERS');
+        // Need to add button to DOM before setting events on it.
+        injectButtonToDom(this._button);
+
+        if (!!this._codeownersContent) {
+            // TODO: add mutation observer for newly loaded files
+            this._button.onclick = () => {
+                this._isShowingMyFiles = !this._isShowingMyFiles;
+                this._isShowingMyFiles ? showSelectedFiles(this._cachedMyFiles) : showAllFiles();
+                this._button.innerHTML = getButtonText(this._isShowingMyFiles);
+            }
+        } else {
+            this._button.onclick = () => {
+                const url = chrome.extension.getURL('popup/popup.html');
+                const w = window.open(url, '_blank', 'width=350,height=300,0,status=0');
+            };
+        }
+    }
+
+    unmount() {
+        if (this._button) {
+            this._button.remove();
+            this._button = null;
+        }
+        // TODO: cleanup mutation observer
+    }
+}
+
+function getButtonText(isShowingMyFiles) {
+    return isShowingMyFiles ? 'Show all files' : 'Show my files';
+};
+
+function createBaseButton(text, tooltipText) {
+    const button = document.createElement('button');
+    button.className = 'diffbar-item btn btn-sm btn-secondary tooltipped tooltipped-s codeowners-btn';
+    button.innerHTML = text;
+    button.setAttribute('aria-label', tooltipText);
+    return button;
+};
+
+function injectButtonToDom(btn) {
     const container = document.querySelector(
         '#files_bucket > div.pr-toolbar.js-sticky.js-sticky-offset-scroll > div > div.float-right.pr-review-tools',
     );
     container.insertBefore(btn, container.firstChild);
 };
-
-const createBaseButton = (text, tooltipText) => {
-    const button = document.createElement('button');
-    button.className = 'diffbar-item btn btn-sm btn-secondary tooltipped tooltipped-s codeowners-btn';
-    button.id = ButtonId;
-    button.innerHTML = text;
-    button.setAttribute('aria-label', tooltipText);
-
-    return button;
-};
-
-const createButtonWithToken = () => {
-    return createBaseButton(getButtonText(), 'Filter files based on CODEOWNERS');
-};
-
-const createButtonWithoutToken = () => {
-    const button = createBaseButton('Show my files', 'CODEOWNERS-EXT: This repo requires a github token');
-    button.onclick = () => {
-        const url = chrome.extension.getURL('popup/popup.html');
-        const w = window.open(url, '_blank', 'width=350,height=300,0,status=0');
-    };
-
-    return button;
-};
-
-const createButtonWhenNoCodeowners = () => {
-    const button = createBaseButton('No Codeowners files', 'CODEOWNERS-EXT: This repo does not have Codeowners');
-    button.disabled = true;
-
-    return button;
-};
-
-const updateFilesCount = async prUrl => {
-    const files = await getRelevantFiles(prUrl);
-
-    const button = document.querySelector(`#${ButtonId}`);
-    button.innerHTML = getButtonText(files.length);
-    button.onclick = () => {
-        showMyFiles = !showMyFiles;
-        button.innerHTML = getButtonText(files.length);
-        toggleFilteredFiles(files);
-    };
-};
-
-const injectButton = async prUrl => {
-    if (buttonExists()) return;
-
-    const hasToken = !!await getToken();
-    let codeownersButton;
-    let hasCodeowners;
-    if (!hasToken) {
-        codeownersButton = createButtonWithoutToken();
-    } else {
-        hasCodeowners = await doesRepoHasCodeowners();
-        codeownersButton = hasCodeowners ? createButtonWithToken() : createButtonWhenNoCodeowners();
-    }
-    injectButtonToDom(codeownersButton);
-
-    hasToken && hasCodeowners && (await updateFilesCount(prUrl));
-};
-
-export default injectButton;

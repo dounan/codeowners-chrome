@@ -3,10 +3,6 @@
     "description": "Browser extension to easily code review with GitHub codeowners",
     "version": "1.0.0",
     "main": "index.js",
-    "dependencies": {
-        "@octokit/rest": "^15.2.6",
-        "codeowners-api": "^2.0.0"
-    },
     "devDependencies": {
         "chrome-webstore-upload-cli": "^1.1.1",
         "webpack": "^4.2.0",

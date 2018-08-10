@@ -1,16 +1,38 @@
+import {loadCodeownersContent} from './codeowners';
 import injectButton from './injectButton';
-import getRelevantFiles from './getRelevantFiles';
+import {getCurrentUsername} from './uiHelpers';
 
-const execute = prUrl => {
-    getRelevantFiles(prUrl).catch(() => {});
-    injectButton(prUrl);
-};
-
-const isFilesSection = () => window.location.href.replace(/\?.*/i, '').endsWith('/files');
+execute();
 
 chrome.runtime.onMessage.addListener(function(request, sender) {
-    if (request.codeowners == 'background') execute(request.location);
+    if (request.type === 'injectButton') execute();
 });
 
-// From URL
-if (isFilesSection()) execute(window.location.href);
+async function execute() {
+    if (!isPrFilesPage()) {
+        return;
+    }
+    const username = getCurrentUsername();
+    if (username) {
+        const {owner, repo} = getPullRequestDetails();
+
+        // TODO: get team names
+        const teamNames = [];
+
+        const codeownersContent = await loadCodeownersContent(owner, repo);
+        injectButton(username, teamNames, codeownersContent);
+    }
+};
+
+function isPrFilesPage() {
+    return window.location.href.replace(/\?.*/i, '').endsWith('/files');
+}
+
+function getPullRequestDetails() {
+    const pathParts = window.location.pathname.split('/');
+    return {
+        owner: pathParts[1],
+        repo: pathParts[2],
+        number: pathParts[4],
+    };
+};

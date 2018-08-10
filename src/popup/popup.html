@@ -14,27 +14,13 @@
   </div>
   <hr>
   <div>
-    <span id='title_span'> Codeowners Extension Requires a
-      <br>
-      <a href="https://github.com/settings/tokens/new?description=codeownersapi" target="_blank">Github Access Token</a>
-    </span>
-    <br>
-    <div>
-      <h5>Why!?</h5>
-      <span>
-        This extension fetches your
-        <i>CODEOWNERS</i> file using GithubApi, and also fetches all of your user's team names
-      </span>
-    </div>
-    <span>To read more, go to our
-      <a href='https://github.com/code-owners/codeowners-ext/' target="_blank">Github Repo</a>
-    </span>
+    <span id='title_span'> Input your CODEOWNERS file contents</span>
   </div>
   <br>
   <form class="form-inline" style="display:  flex; justify-content:  space-between;">
     <div class="form-group">
-      <input type="password" class="form-control" id="github_token" placeholder="Your Github token..." style="width: 240px">
-      <button class="btn btn-primary" id='save_token'>Save</button>
+      <textarea class="form-control" id="codeowners_content" placeholder="Your CODEOWNERS file content..." style="width: 240px"></textarea>
+      <button class="btn btn-primary" id='save_codeowners_content'>Save</button>
     </div>
   </form>
 
