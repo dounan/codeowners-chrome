@@ -29,5 +29,8 @@
     "bugs": {
         "url": "https://github.com/elaygl/codeowners-ext/issues"
     },
-    "homepage": "https://github.com/elaygl/codeowners-ext#readme"
+    "homepage": "https://github.com/elaygl/codeowners-ext#readme",
+    "dependencies": {
+        "ignore": "^4.0.5"
+    }
 }
