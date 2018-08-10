@@ -1,5 +1,5 @@
 {
-    "name": "Codeowners",
+    "name": "Codeowners Without Auth",
     "description": "Easier codeowners code reviews",
     "version": "1.0.6",
     "manifest_version": 2,
