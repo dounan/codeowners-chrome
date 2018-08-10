@@ -1,4 +1,5 @@
 import {loadCodeownersContent} from './codeowners';
+import getTeamNames from './getTeamNames';
 import injectButton from './injectButton';
 import {getCurrentUsername} from './uiHelpers';
 
@@ -15,10 +16,7 @@ async function execute() {
     const username = getCurrentUsername();
     if (username) {
         const {owner, repo} = getPullRequestDetails();
-
-        // TODO: get team names
-        const teamNames = [];
-
+        const teamNames = await getTeamNames(owner, username);
         const codeownersContent = await loadCodeownersContent(owner, repo);
         injectButton(username, teamNames, codeownersContent);
     }
