@@ -26,7 +26,7 @@ function parseCodeowners(codeownersContent) {
         return [];
     }
     return codeownersContent.split("\n")
-      .map(line => line.trim)
+      .map(line => line.trim())
       .filter(line => line.length > 0 && line[0] !== "#")
       .map(line => line.split(/\s+/));
 }

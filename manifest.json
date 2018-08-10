@@ -15,7 +15,7 @@
         "48": "icons/tie_48.png",
         "128": "icons/tie_128.png"
     },
-    "permissions": ["tabs", "activeTab", "webNavigation", "storage"],
+    "permissions": ["tabs", "activeTab", "cookies", "webNavigation", "storage", "*://github.com/*"],
     "content_scripts": [
         {
             "matches": ["*://github.com/*"],

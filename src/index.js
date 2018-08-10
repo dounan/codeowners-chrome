@@ -20,7 +20,7 @@ async function execute() {
         const {owner, repo} = getPullRequestDetails();
         const teamNames = await getTeamNames(owner, username);
         const codeownersContent = await loadCodeownersContent(owner, repo);
-        injectButton([username, ...teamNames], codeownersContent);
+        injectButton(toOwners(owner, username, teamNames), codeownersContent);
     }
 };
 
@@ -36,3 +36,9 @@ function getPullRequestDetails() {
         number: pathParts[4],
     };
 };
+
+function toOwners(owner, username, teamNames) {
+    console.log(teamNames)
+    const teamOwners = teamNames.map(name => `@${owner}/${name}`);
+    return [`@${username}`, ...teamOwners];
+}

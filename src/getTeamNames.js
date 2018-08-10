@@ -1,5 +1,7 @@
 async function getTeamNames(owner, username) {
-    const result = await fetch(`https://github.com/orgs/${owner}/teams?query=%40${username}`);
+    const result = await fetch(`https://github.com/orgs/${owner}/teams?query=%40${username}`, {
+        credentials: 'include',
+      });
     if (!result.ok) {
         throw new Error(`Failed to load teams (status: ${result.status})`);
     }
