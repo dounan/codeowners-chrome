@@ -1,7 +1,7 @@
 {
     "name": "Codeowners Without Auth",
     "description": "Easier codeowners code reviews",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "manifest_version": 2,
     "background": {
         "scripts": ["lib/background.js"]
