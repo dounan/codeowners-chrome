@@ -1,12 +1,10 @@
-var webpack = require("webpack");
 var path = require("path");
-var env = require("./utils/env");
 var CleanWebpackPlugin = require("clean-webpack-plugin");
 var CopyWebpackPlugin = require("copy-webpack-plugin");
 var HtmlWebpackPlugin = require("html-webpack-plugin");
 var WriteFilePlugin = require("write-file-webpack-plugin");
 
-var options = {
+module.exports = {
   entry: {
     background: path.join(__dirname, "src", "js", "background.js"),
     content: path.join(__dirname, "src", "js", "content.js"),
@@ -31,12 +29,7 @@ var options = {
     ]
   },
   plugins: [
-    // clean the build folder
     new CleanWebpackPlugin(["build"]),
-    // expose and write the allowed env vars on the compiled bundle
-    new webpack.DefinePlugin({
-      "process.env.NODE_ENV": JSON.stringify(env.NODE_ENV)
-    }),
     new CopyWebpackPlugin([
       {
         from: "src/manifest.json",
@@ -59,9 +52,3 @@ var options = {
     new WriteFilePlugin()
   ]
 };
-
-if (env.NODE_ENV === "development") {
-  options.devtool = "cheap-module-source-map";
-}
-
-module.exports = options;
