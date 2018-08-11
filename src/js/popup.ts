@@ -1,8 +1,11 @@
-const codeownersInput = document.getElementById("codeowners_content");
+const codeownersInput = <HTMLInputElement>(
+  ensureElementById("codeowners_content")
+);
 
-document
-  .getElementById("save_codeowners_content")
-  .addEventListener("click", saveCodeownersContent);
+ensureElementById("save_codeowners_content").addEventListener(
+  "click",
+  saveCodeownersContent,
+);
 
 chrome.storage.sync.get("default_codeowners", ({default_codeowners}) => {
   if (!default_codeowners) {
@@ -19,8 +22,16 @@ function saveCodeownersContent() {
 function handleSaveSuccess() {
   chrome.tabs.query({active: true}, function(tabs) {
     tabs.forEach(tab => {
-      chrome.tabs.sendMessage(tab.id, {type: "injectButton"});
+      tab.id != null && chrome.tabs.sendMessage(tab.id, {type: "injectButton"});
     });
     window.close();
   });
+}
+
+function ensureElementById(id: string): HTMLElement {
+  const elem = document.getElementById(id);
+  if (elem == null) {
+    throw new Error(`Could not find element "#${id}"`);
+  }
+  return elem;
 }

@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "lib": ["dom", "es2016"],
+    "module": "es6",
+    "noImplicitAny": true,
+    "outDir": "./build/",
+    "sourceMap": true,
+    "strict": true,
+    "target": "es6",
+    "typeRoots": ["./typings", "./node_modules/@types"]
+  }
+}

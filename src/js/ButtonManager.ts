@@ -4,7 +4,14 @@ import {getAllFilepaths, showAllFiles, showSelectedFiles} from "./uiHelpers";
 let globalBtnId = 1;
 
 class ButtonManager {
-  constructor(owners, codeownersContent) {
+  _owners: Array<string>;
+  _codeownersContent: string;
+  _buttonId: string;
+  _observer: MutationObserver | null;
+  _isShowingMyFiles: boolean;
+  _cachedMyFiles: Array<string>;
+
+  constructor(owners: Array<string>, codeownersContent: string) {
     this._owners = owners;
     this._codeownersContent = codeownersContent;
 
@@ -22,7 +29,7 @@ class ButtonManager {
     });
   }
 
-  mount() {
+  mount(): void {
     const button = document.createElement("button");
     button.id = this._buttonId;
     setButtonStyle(button, this._isShowingMyFiles);
@@ -48,7 +55,7 @@ class ButtonManager {
     }
   }
 
-  unmount() {
+  unmount(): void {
     const button = document.querySelector(`#${this._buttonId}`);
     if (button) {
       button.remove();
@@ -58,13 +65,13 @@ class ButtonManager {
     }
   }
 
-  applyFilter() {
+  applyFilter(): void {
     this._isShowingMyFiles
       ? showSelectedFiles(this._cachedMyFiles)
       : showAllFiles();
   }
 
-  handleMutation(mutationsList) {
+  handleMutation(mutationsList: Array<MutationRecord>): void {
     this._cachedMyFiles = filterByCodeowners({
       allFilepaths: getAllFilepaths(),
       codeownersContent: this._codeownersContent,
@@ -78,7 +85,7 @@ class ButtonManager {
 
 export default ButtonManager;
 
-function setButtonStyle(button, isShowingMyFiles) {
+function setButtonStyle(button: Element, isShowingMyFiles: boolean): void {
   button.className =
     "diffbar-item btn btn-sm btn-secondary tooltipped tooltipped-s codeowners-btn";
   button.innerHTML = isShowingMyFiles ? "Show all files" : "Show my files";
@@ -90,16 +97,12 @@ function setButtonStyle(button, isShowingMyFiles) {
   );
 }
 
-function getButtonText(isShowingMyFiles) {
-  return isShowingMyFiles ? "Show all files" : "Show my files";
-}
-
-function injectButtonToDom(btn) {
+function injectButtonToDom(button: Element): void {
   const container = document.querySelector(
     "#files_bucket > div.pr-toolbar.js-sticky.js-sticky-offset-scroll > div > div.float-right.pr-review-tools",
   );
   if (!container) {
     throw new Error("Could not find container to insert button");
   }
-  container.insertBefore(btn, container.firstChild);
+  container.insertBefore(button, container.firstChild);
 }

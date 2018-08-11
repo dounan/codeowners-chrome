@@ -1,0 +1,38 @@
+export function getCurrentUsername(): string | null {
+  const elements = document.querySelectorAll('meta[name="user-login"]');
+  if (elements.length === 0) {
+    return null;
+  } else if (elements.length > 1) {
+    throw new Error(
+      `Expected at most 1 element but found ${elements.length} elements`,
+    );
+  }
+  return (<HTMLMetaElement>elements[0]).content;
+}
+
+export function getAllFilepaths(): Array<string> {
+  return Array.from(document.querySelectorAll("#files .file-info > a")).map(
+    e => e.innerHTML,
+  );
+}
+
+export function showAllFiles(): void {
+  Array.from(document.querySelectorAll("#files > div > div")).forEach(elem => {
+    (<HTMLElement>elem).style.display = "block";
+  });
+}
+
+export function showSelectedFiles(selectedFilenames: Array<string>): void {
+  Array.from(document.querySelectorAll("#files .js-details-container")).forEach(
+    elem => {
+      const nameElem: HTMLElement | null = elem.querySelector(".file-info > a");
+      if (nameElem) {
+        (<HTMLElement>elem).style.display = selectedFilenames.includes(
+          nameElem.title,
+        )
+          ? "block"
+          : "none";
+      }
+    },
+  );
+}

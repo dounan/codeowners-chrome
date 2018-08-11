@@ -12,9 +12,9 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
   }
 });
 
-let curButtonManager = null;
+let curButtonManager: ButtonManager | null = null;
 
-async function injectButton() {
+async function injectButton(): Promise<void> {
   if (!isPrFilesPage()) {
     return;
   }
@@ -30,18 +30,22 @@ async function injectButton() {
   }
 }
 
-function ejectButton() {
+function ejectButton(): void {
   if (curButtonManager) {
     curButtonManager.unmount();
     curButtonManager = null;
   }
 }
 
-function isPrFilesPage() {
+function isPrFilesPage(): boolean {
   return window.location.href.replace(/\?.*/i, "").endsWith("/files");
 }
 
-function getPullRequestDetails() {
+function getPullRequestDetails(): {
+  owner: string;
+  repo: string;
+  number: string;
+} {
   const pathParts = window.location.pathname.split("/");
   return {
     owner: pathParts[1],
@@ -50,7 +54,11 @@ function getPullRequestDetails() {
   };
 }
 
-function toOwners(owner, username, teamNames) {
+function toOwners(
+  owner: string,
+  username: string,
+  teamNames: Array<string>,
+): Array<string> {
   const teamOwners = teamNames.map(name => `@${owner}/${name}`);
   return [`@${username}`, ...teamOwners];
 }

@@ -6,16 +6,32 @@ var WriteFilePlugin = require("write-file-webpack-plugin");
 
 module.exports = {
   entry: {
-    background: path.join(__dirname, "src", "js", "background.js"),
-    content: path.join(__dirname, "src", "js", "content.js"),
-    popup: path.join(__dirname, "src", "js", "popup.js"),
+    background: path.join(__dirname, "src", "js", "background.ts"),
+    content: path.join(__dirname, "src", "js", "content.ts"),
+    popup: path.join(__dirname, "src", "js", "popup.ts"),
   },
   output: {
     path: path.join(__dirname, "build"),
     filename: "[name].bundle.js",
   },
+  resolve: {
+    extensions: [".ts", ".js", ".json"],
+  },
   module: {
     rules: [
+      {
+        test: /\.ts$/,
+        use: [
+          {
+            loader: "ts-loader",
+            options: {
+              transpileOnly: true,
+              experimentalWatchApi: true,
+            },
+          },
+        ],
+        exclude: /node_modules|typings/,
+      },
       {
         test: /\.(png)$/,
         loader: "file-loader?name=[name].[ext]",
