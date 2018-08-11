@@ -24,10 +24,8 @@ class ButtonManager {
 
     mount() {
         const button = document.createElement('button');
-        button.className = 'diffbar-item btn btn-sm btn-secondary tooltipped tooltipped-s codeowners-btn';
         button.id = this._buttonId;
-        button.innerHTML = getButtonText(this._isShowingMyFiles);
-        button.setAttribute('aria-label', 'Filter files based on CODEOWNERS');
+        setButtonStyle(button, this._isShowingMyFiles);
         // Need to add button to DOM before setting events on it.
         injectButtonToDom(button);
 
@@ -40,7 +38,7 @@ class ButtonManager {
             button.onclick = () => {
                 this._isShowingMyFiles = !this._isShowingMyFiles;
                 this.applyFilter();
-                this._button.innerHTML = getButtonText(this._isShowingMyFiles);
+                setButtonStyle(button, this._isShowingMyFiles);
             }
         } else {
             button.onclick = () => {
@@ -77,6 +75,14 @@ class ButtonManager {
 }
 
 export default ButtonManager;
+
+function setButtonStyle(button, isShowingMyFiles) {
+    button.className = 'diffbar-item btn btn-sm btn-secondary tooltipped tooltipped-s codeowners-btn';
+    button.innerHTML = isShowingMyFiles ? 'Show all files' : 'Show my files';
+    button.setAttribute(
+        'aria-label', isShowingMyFiles ? 'Remove CODEOWNERS filter' : 'Filter files based on CODEOWNERS'
+    );
+}
 
 function getButtonText(isShowingMyFiles) {
     return isShowingMyFiles ? 'Show all files' : 'Show my files';
