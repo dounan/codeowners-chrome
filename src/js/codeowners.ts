@@ -1,5 +1,3 @@
-import ignore from "ignore";
-
 export function loadCodeownersContent(
   owner: string,
   repo: string,
@@ -11,17 +9,13 @@ export function loadCodeownersContent(
   });
 }
 
-export function filterByCodeowners(params: {
-  allFilepaths: Array<string>;
-  codeownersContent: string;
-  owners: Array<string>;
-}): Array<string> {
-  const {allFilepaths, codeownersContent, owners} = params;
+export function getFilterPatterns(
+  codeownersContent: string,
+  owners: Array<string>,
+): Array<string> {
   const parsed = parseCodeowners(codeownersContent);
   const ownedRows = filterRowsByOwned(parsed, owners);
-  const ownedPatterns = ownedRows.map((row: Array<string>) => row[0]);
-  const ig = ignore().add(ownedPatterns);
-  return allFilepaths.filter(path => ig.ignores(path));
+  return ownedRows.map((row: Array<string>) => row[0]);
 }
 
 type ParsedCodeowners = Array<Array<string>>;

@@ -1,9 +1,7 @@
-import ButtonManager from "./ButtonManager";
-import {loadCodeownersContent} from "./codeowners";
+import {Button, FilterButton, SetCodeownersButton} from "./buttons";
+import {loadCodeownersContent, getFilterPatterns} from "./codeowners";
 import getTeamNames from "./getTeamNames";
 import {getCurrentUsername} from "./uiHelpers";
-
-injectButton();
 
 chrome.runtime.onMessage.addListener(function(request, sender) {
   switch (request.type) {
@@ -12,7 +10,7 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
   }
 });
 
-let curButtonManager: ButtonManager | null = null;
+let curButton: Button | null = null;
 
 async function injectButton(): Promise<void> {
   if (!isPrFilesPage()) {
@@ -20,20 +18,25 @@ async function injectButton(): Promise<void> {
   }
   const username = getCurrentUsername();
   if (username) {
-    const {owner, repo} = getPullRequestDetails();
-    const teamNames = await getTeamNames(owner, username);
-    const owners = toOwners(owner, username, teamNames);
-    const codeownersContent = await loadCodeownersContent(owner, repo);
     ejectButton();
-    curButtonManager = new ButtonManager(owners, codeownersContent);
-    curButtonManager.mount();
+    const {owner, repo} = getPullRequestDetails();
+    const codeownersContent = await loadCodeownersContent(owner, repo);
+    if (codeownersContent.length > 0) {
+      const teamNames = await getTeamNames(owner, username);
+      const owners = toOwners(owner, username, teamNames);
+      const filterPatterns = getFilterPatterns(codeownersContent, owners);
+      curButton = new FilterButton(filterPatterns);
+    } else {
+      curButton = new SetCodeownersButton();
+    }
+    curButton.mount();
   }
 }
 
 function ejectButton(): void {
-  if (curButtonManager) {
-    curButtonManager.unmount();
-    curButtonManager = null;
+  if (curButton) {
+    curButton.unmount();
+    curButton = null;
   }
 }
 
@@ -62,3 +65,6 @@ function toOwners(
   const teamOwners = teamNames.map(name => `@${owner}/${name}`);
   return [`@${username}`, ...teamOwners];
 }
+
+// In case we are starting on the PR files page
+injectButton();
