@@ -12,43 +12,45 @@ module.exports = {
   },
   output: {
     path: path.join(__dirname, "build"),
-    filename: "[name].bundle.js"
+    filename: "[name].bundle.js",
   },
   module: {
     rules: [
       {
         test: /\.(png)$/,
         loader: "file-loader?name=[name].[ext]",
-        exclude: /node_modules/
+        exclude: /node_modules/,
       },
       {
         test: /\.html$/,
         loader: "html-loader",
-        exclude: /node_modules/
-      }
-    ]
+        exclude: /node_modules/,
+      },
+    ],
   },
   plugins: [
     new CleanWebpackPlugin(["build"]),
     new CopyWebpackPlugin([
       {
         from: "src/manifest.json",
-        transform: function (content, path) {
+        transform: function(content, path) {
           // generates the manifest file using the package.json informations
-          return Buffer.from(JSON.stringify({
-            description: process.env.npm_package_description,
-            version: process.env.npm_package_version,
-            ...JSON.parse(content.toString())
-          }))
-        }
+          return Buffer.from(
+            JSON.stringify({
+              description: process.env.npm_package_description,
+              version: process.env.npm_package_version,
+              ...JSON.parse(content.toString()),
+            }),
+          );
+        },
       },
       "src/icons",
     ]),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, "src", "popup.html"),
       filename: "popup.html",
-      chunks: ["popup"]
+      chunks: ["popup"],
     }),
-    new WriteFilePlugin()
-  ]
+    new WriteFilePlugin(),
+  ],
 };

@@ -1,4 +1,5 @@
 # codeowners-ext
+
 Browser extension (Chrome) to easily code review with GitHub codeowners
 Features:
 
@@ -6,10 +7,10 @@ Features:
 - Works with teams as well
 - Support for private repos (see below)
 
-
 ![image](docs/all_chrome.png)
 
 ![image](docs/popup.png)
 
 ## Credits
+
 Elay Gliksberg && Ore Poran
