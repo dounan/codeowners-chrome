@@ -1,0 +1,25 @@
+{
+  "name": "CODEOWNERS PR Filter",
+  "background": {
+    "scripts": ["background.bundle.js"],
+    "persistent": false
+  },
+  "browser_action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://github.com/*"],
+      "css": [],
+      "js": ["content.bundle.js"]
+    }
+  ],
+  "icons": {
+      "16": "icon-16.png",
+      "48": "icon-48.png",
+      "128": "icon-128.png"
+  },
+  "manifest_version": 2,
+  "permissions": ["tabs", "activeTab", "cookies", "webNavigation", "storage", "*://github.com/*"],
+  "web_accessible_resources": ["popup.html"]
+}

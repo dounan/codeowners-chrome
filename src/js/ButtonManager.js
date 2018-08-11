@@ -42,7 +42,7 @@ class ButtonManager {
             }
         } else {
             button.onclick = () => {
-                const url = chrome.extension.getURL('popup/popup.html');
+                const url = chrome.extension.getURL('popup.html');
                 const w = window.open(url, '_blank', 'width=500,height=400,0,status=0');
             };
         }
