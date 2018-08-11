@@ -19,11 +19,11 @@ async function injectButton(): Promise<void> {
   const username = getCurrentUsername();
   if (username) {
     ejectButton();
-    const {owner, repo} = getPullRequestDetails();
-    const codeownersContent = await loadCodeownersContent(owner, repo);
+    const {organization, repo} = getPullRequestDetails();
+    const codeownersContent = await loadCodeownersContent(organization, repo);
     if (codeownersContent.length > 0) {
-      const teamNames = await getTeamNames(owner, username);
-      const owners = toOwners(owner, username, teamNames);
+      const teamNames = await getTeamNames(organization, username);
+      const owners = toOwners(organization, username, teamNames);
       const filterPatterns = getFilterPatterns(codeownersContent, owners);
       curButton = new FilterButton(filterPatterns);
     } else {
@@ -45,24 +45,24 @@ function isPrFilesPage(): boolean {
 }
 
 function getPullRequestDetails(): {
-  owner: string;
+  organization: string;
   repo: string;
   number: string;
 } {
   const pathParts = window.location.pathname.split("/");
   return {
-    owner: pathParts[1],
+    organization: pathParts[1],
     repo: pathParts[2],
     number: pathParts[4],
   };
 }
 
 function toOwners(
-  owner: string,
+  organization: string,
   username: string,
   teamNames: Array<string>,
 ): Array<string> {
-  const teamOwners = teamNames.map(name => `@${owner}/${name}`);
+  const teamOwners = teamNames.map(name => `@${organization}/${name}`);
   return [`@${username}`, ...teamOwners];
 }
 

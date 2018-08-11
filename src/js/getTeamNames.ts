@@ -1,9 +1,9 @@
 async function getTeamNames(
-  owner: string,
+  organization: string,
   username: string,
 ): Promise<Array<string>> {
   const result = await fetch(
-    `https://github.com/orgs/${owner}/teams?query=%40${username}`,
+    `https://github.com/orgs/${organization}/teams?query=%40${username}`,
     {
       credentials: "include",
     },

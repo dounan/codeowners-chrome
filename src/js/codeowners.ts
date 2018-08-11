@@ -1,5 +1,5 @@
 export function loadCodeownersContent(
-  owner: string,
+  organization: string,
   repo: string,
 ): Promise<string> {
   return new Promise(function(resolve) {
