@@ -1,14 +1,12 @@
 var path = require("path");
 var CleanWebpackPlugin = require("clean-webpack-plugin");
 var CopyWebpackPlugin = require("copy-webpack-plugin");
-var HtmlWebpackPlugin = require("html-webpack-plugin");
 var WriteFilePlugin = require("write-file-webpack-plugin");
 
 module.exports = {
   entry: {
     background: path.join(__dirname, "src", "js", "background.ts"),
     content: path.join(__dirname, "src", "js", "content.ts"),
-    popup: path.join(__dirname, "src", "js", "popup.ts"),
   },
   output: {
     path: path.join(__dirname, "build"),
@@ -62,11 +60,6 @@ module.exports = {
       },
       "src/icons",
     ]),
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, "src", "popup.html"),
-      filename: "popup.html",
-      chunks: ["popup"],
-    }),
     new WriteFilePlugin(),
   ],
 };

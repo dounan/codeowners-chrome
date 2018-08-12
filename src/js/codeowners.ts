@@ -1,12 +1,37 @@
-export function loadCodeownersContent(
-  organization: string,
-  repo: string,
-): Promise<string> {
-  return new Promise(function(resolve) {
-    chrome.storage.sync.get("default_codeowners", ({default_codeowners}) => {
-      resolve(default_codeowners);
-    });
-  });
+import {fetchDom} from "./dom";
+
+const POSSIBLE_DIRS = ["/", "/docs/", "/.github/"];
+
+const codeownersCache: {[index: string]: string} = {};
+
+export async function loadCodeownersContent(prInfo: {
+  organization: string;
+  repo: string;
+  baseBranch: string;
+}): Promise<string> {
+  const {organization, repo, baseBranch} = prInfo;
+  const key = `${organization}/${repo}/${baseBranch}`;
+  if (codeownersCache[key] == null) {
+    codeownersCache[key] = await POSSIBLE_DIRS.reduce(
+      (promise, directory) =>
+        promise.catch(() =>
+          fetchCodeownersContent(
+            `https://github.com/${organization}/${repo}/blob/${baseBranch}${directory}CODEOWNERS`,
+          ),
+        ),
+      <Promise<string>>Promise.reject(""),
+    ).catch(() => "");
+  }
+  return codeownersCache[key];
+}
+
+async function fetchCodeownersContent(url: string): Promise<string> {
+  const doc = await fetchDom(url);
+  return Array.from(
+    doc.querySelectorAll("table.js-file-line-container td.js-file-line"),
+  )
+    .map(e => e.innerHTML)
+    .join("\n");
 }
 
 export function getFilterPatterns(

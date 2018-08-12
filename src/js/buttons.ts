@@ -105,16 +105,6 @@ export class FilterButton extends AbstractButton {
   }
 }
 
-export class SetCodeownersButton extends AbstractButton {
-  initializeButton(button: HTMLButtonElement): void {
-    setFilterButtonStyle(button, false);
-    button.onclick = () => {
-      const url = chrome.extension.getURL("popup.html");
-      const w = window.open(url, "_blank", "width=500,height=400,0,status=0");
-    };
-  }
-}
-
 function setFilterButtonStyle(button: Element, isFiltering: boolean): void {
   button.className =
     "diffbar-item btn btn-sm btn-secondary tooltipped tooltipped-s codeowners-btn";

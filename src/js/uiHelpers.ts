@@ -4,7 +4,7 @@ export function getCurrentUsername(): string | null {
     return null;
   } else if (elements.length > 1) {
     throw new Error(
-      `Expected at most 1 element but found ${elements.length} elements`,
+      `Expected at most 1 user-login but found ${elements.length}`,
     );
   }
   return (<HTMLMetaElement>elements[0]).content;
@@ -14,6 +14,31 @@ export function getAllFilepaths(): Array<string> {
   return Array.from(document.querySelectorAll("#files .file-info > a")).map(
     e => e.innerHTML,
   );
+}
+
+const PR_INFO_REGEX = /^([a-zA-Z0-9-_]+?)\/([a-zA-Z0-9-_]+?):(.+)$/;
+
+export function getPrInfo(): {
+  organization: string;
+  repo: string;
+  baseBranch: string;
+} {
+  const elements = document.querySelectorAll(".base-ref");
+  if (elements.length !== 1) {
+    throw new Error(
+      `Expected exactly 1 .base-ref but found ${elements.length}`,
+    );
+  }
+  const infoStr = (<HTMLElement>elements[0]).title;
+  const m = infoStr.match(PR_INFO_REGEX);
+  if (m == null) {
+    throw new Error(`Unexpected PR info ${infoStr}`);
+  }
+  return {
+    organization: m[1],
+    repo: m[2],
+    baseBranch: m[3],
+  };
 }
 
 export function injectButtonToDom(button: Element): void {

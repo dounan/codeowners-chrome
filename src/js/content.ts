@@ -1,7 +1,7 @@
-import {Button, FilterButton, SetCodeownersButton} from "./buttons";
+import {Button, FilterButton} from "./buttons";
 import {loadCodeownersContent, getFilterPatterns} from "./codeowners";
 import getTeamNames from "./getTeamNames";
-import {getCurrentUsername} from "./uiHelpers";
+import {getCurrentUsername, getPrInfo} from "./uiHelpers";
 
 chrome.runtime.onMessage.addListener(function(request, sender) {
   switch (request.type) {
@@ -13,23 +13,25 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
 let curButton: Button | null = null;
 
 async function injectButton(): Promise<void> {
+  ejectButton();
   if (!isPrFilesPage()) {
     return;
   }
   const username = getCurrentUsername();
   if (username) {
-    ejectButton();
-    const {organization, repo} = getPullRequestDetails();
-    const codeownersContent = await loadCodeownersContent(organization, repo);
+    const {organization, repo, baseBranch} = getPrInfo();
+    const codeownersContent = await loadCodeownersContent({
+      organization,
+      repo,
+      baseBranch,
+    });
     if (codeownersContent.length > 0) {
       const teamNames = await getTeamNames(organization, username);
       const owners = toOwners(organization, username, teamNames);
       const filterPatterns = getFilterPatterns(codeownersContent, owners);
       curButton = new FilterButton(filterPatterns);
-    } else {
-      curButton = new SetCodeownersButton();
+      curButton.mount();
     }
-    curButton.mount();
   }
 }
 
@@ -42,19 +44,6 @@ function ejectButton(): void {
 
 function isPrFilesPage(): boolean {
   return window.location.href.replace(/\?.*/i, "").endsWith("/files");
-}
-
-function getPullRequestDetails(): {
-  organization: string;
-  repo: string;
-  number: string;
-} {
-  const pathParts = window.location.pathname.split("/");
-  return {
-    organization: pathParts[1],
-    repo: pathParts[2],
-    number: pathParts[4],
-  };
 }
 
 function toOwners(

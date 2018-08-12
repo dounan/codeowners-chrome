@@ -4,9 +4,6 @@
     "scripts": ["background.bundle.js"],
     "persistent": false
   },
-  "browser_action": {
-    "default_popup": "popup.html"
-  },
   "content_scripts": [
     {
       "matches": ["*://github.com/*"],
@@ -20,13 +17,5 @@
     "128": "icon-128.png"
   },
   "manifest_version": 2,
-  "permissions": [
-    "tabs",
-    "activeTab",
-    "cookies",
-    "webNavigation",
-    "storage",
-    "*://github.com/*"
-  ],
-  "web_accessible_resources": ["popup.html"]
+  "permissions": ["cookies", "webNavigation", "*://github.com/*"]
 }
