@@ -61,6 +61,7 @@ typings/
 build
 ext
 dist
+build.zip
 
 # Other
 .DS_Store
