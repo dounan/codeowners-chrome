@@ -1,16 +1,25 @@
-# codeowners-ext
+<h1 align="center">
+  CODEOWNERS FILTER
+</h1>
 
-Browser extension (Chrome) to easily code review with GitHub codeowners
-Features:
+<p align="center">
+    <img src="docs/icon.png" alt="logo" />
+</p>
 
-- Filter out files that don't belong to you
-- Works with teams as well
-- Support for private repos (see below)
+<h4 align="center">
+  Chrome extension to filter PR files by <a href="https://help.github.com/articles/about-codeowners/">CODEOWNERS</a>.
+</h4>
 
-![image](docs/all_chrome.png)
+<p align="center">
+  :sparkles: Works automagically with teams and private repos :sparkles:
+</p>
 
-![image](docs/popup.png)
+<p align="center">
+  <img src="docs/screenshot.png" alt="screenshot" />
+</p>
 
-## Credits
+---
 
-Elay Gliksberg && Ore Poran
+<h6 align="center">
+  Icon made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
+</h6>

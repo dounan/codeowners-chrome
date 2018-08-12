@@ -1,5 +1,5 @@
 {
-  "name": "CODEOWNERS PR Filter",
+  "name": "CODEOWNERS Filter",
   "background": {
     "scripts": ["background.bundle.js"],
     "persistent": false
