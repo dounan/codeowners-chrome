@@ -7,7 +7,7 @@
 </p>
 
 <h4 align="center">
-  Chrome extension to filter PR files by <a href="https://help.github.com/articles/about-codeowners/">CODEOWNERS</a>
+  <a href="https://chrome.google.com/webstore/detail/codeowners-filter/cdbbcicplakoajgcidhcihkffapomdhi">Chrome extension</a> to filter PR files by <a href="https://help.github.com/articles/about-codeowners/">CODEOWNERS</a>
 </h4>
 
 <p align="center">
