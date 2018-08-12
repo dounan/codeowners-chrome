@@ -4,6 +4,13 @@
     "scripts": ["background.bundle.js"],
     "persistent": false
   },
+  "page_action": {
+    "default_icon": {
+      "16": "browser-icon-16.png",
+      "24": "browser-icon-24.png",
+      "32": "browser-icon-32.png"
+    }
+  },
   "content_scripts": [
     {
       "matches": ["*://github.com/*"],
