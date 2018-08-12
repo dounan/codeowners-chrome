@@ -13,7 +13,7 @@ export interface Button {
 
 let globalBtnId = 1;
 
-export class AbstractButton implements Button {
+class AbstractButton implements Button {
   _buttonId: string;
 
   constructor() {
@@ -28,7 +28,7 @@ export class AbstractButton implements Button {
     button.id = this._buttonId;
     // Need to add button to DOM before setting events on it.
     injectButtonToDom(button);
-    this.initializeButton(button);
+    this.initialize(button);
   }
 
   unmount() {
@@ -38,8 +38,8 @@ export class AbstractButton implements Button {
     }
   }
 
-  initializeButton(button: HTMLButtonElement): void {
-    throw new Error("Implement me!");
+  initialize(button: HTMLButtonElement): void {
+    throw new Error("Missing implementation for `initialize`");
   }
 }
 
@@ -73,7 +73,7 @@ export class FilterButton extends AbstractButton {
     }
   }
 
-  initializeButton(button: HTMLButtonElement): void {
+  initialize(button: HTMLButtonElement): void {
     setFilterButtonStyle(button, this._isFiltering);
     button.onclick = () => {
       this._isFiltering = !this._isFiltering;
