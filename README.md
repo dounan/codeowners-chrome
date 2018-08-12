@@ -12,6 +12,8 @@
 
 <p align="center">
   :sparkles: Works automagically with teams and private repos :sparkles:
+  <br />
+  No personal access token needed!
 </p>
 
 <p align="center">
