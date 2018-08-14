@@ -13,7 +13,6 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
 let curButton: Button | null = null;
 
 async function injectButton(): Promise<void> {
-  ejectButton();
   if (!isPrFilesPage()) {
     return;
   }
@@ -29,16 +28,12 @@ async function injectButton(): Promise<void> {
       const teamNames = await getTeamNames(organization, username);
       const owners = toOwners(organization, username, teamNames);
       const filterPatterns = getFilterPatterns(codeownersContent, owners);
+      if (curButton) {
+        curButton.unmount();
+      }
       curButton = new FilterButton(filterPatterns);
       curButton.mount();
     }
-  }
-}
-
-function ejectButton(): void {
-  if (curButton) {
-    curButton.unmount();
-    curButton = null;
   }
 }
 
