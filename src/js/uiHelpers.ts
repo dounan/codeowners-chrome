@@ -12,7 +12,7 @@ export function getCurrentUsername(): string | null {
 
 export function getAllFilepaths(): Array<string> {
   return Array.from(document.querySelectorAll("#files .file-info > a")).map(
-    e => e.innerHTML,
+    e => (<HTMLAnchorElement>e).title,
   );
 }
 
