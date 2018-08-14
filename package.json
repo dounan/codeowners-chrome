@@ -1,6 +1,6 @@
 {
   "name": "codeowners-chrome",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Filter PR files by GitHub CODEOWNERS",
   "scripts": {
     "build": "yarn webpack --config webpack.prod.js",
